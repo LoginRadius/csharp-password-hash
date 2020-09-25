@@ -39,8 +39,8 @@ var userObject = new User
 };
 ```
 ### Example 1 - Create HashConfig object (When GenratePerPasswordSalt is true)
-//Create HashConfig object and set below properties
 ```C#
+//Create HashConfig object and set below properties
 var hashConfig = new HashingConfig
 {
   GenratePerPasswordSalt = true, // This property is used when we have generate different password salt
@@ -51,10 +51,9 @@ var hashConfig = new HashingConfig
 };
 ```
 ### Check password (When GenratePerPasswordSalt is true)
-
+```C#
 //Combine the user object and HashConfig object (When GenratePerPasswordSalt is true)
 //Create method to check password
-```C#
 public void ValidatePassword()
 {
   var userObject = new User
@@ -77,9 +76,9 @@ public void ValidatePassword()
 ```
 
 ### Example 2 - Create HashConfig object (When GenratePerPasswordSalt is false)
+```C#
 //In that case we have to set the GlobalSalt property
 //Create HashConfig object and set below properties
-```C#
 var hashConfig = new HashingConfig
 {
   GenratePerPasswordSalt = false, \
@@ -90,10 +89,9 @@ var hashConfig = new HashingConfig
 };
 ```
 ### Check password (When GenratePerPasswordSalt is false)
-
+```C#
 //Combine the user object and HashConfig object (When GenratePerPasswordSalt is false)
 //Create method to check password
-```C#
 public void ValidatePassword()
 {
   var userObject = new User
