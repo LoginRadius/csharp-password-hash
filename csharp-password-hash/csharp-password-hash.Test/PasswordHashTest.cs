@@ -49,6 +49,26 @@ namespace CSharpPasswordHash.Test
 
                 Assert.False(match);
             }
+
+            [Theory]
+            [ClassData(typeof(TestHashDataGenerator))]
+            public void CheckHash(HashingAlgo hashingAlgo, string expectedHashBase64)
+            {
+                var hashConfig = new HashingConfig
+                {
+                    GenratePerPasswordSalt = true,
+                    GlobalSalt = null,
+                    SaltedPasswordFormat = SaltedPasswordFormat,
+                    HashingAlgo = hashingAlgo,
+                    PasswordHashEncodingType = EncodingType.Default
+                };
+
+                var passwordHashing = new PasswordHashing();
+                var expectedHash = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(expectedHashBase64));
+                var match = passwordHashing.CheckPassword(expectedHash, hashConfig, CorrectPassword);
+
+                Assert.True(match);
+            }
         }
 
         public class WhenPerPasswordSaltFalse
