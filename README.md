@@ -114,7 +114,7 @@ public void ValidatePassword()
 ```
 
 ## Contributing
-Would love any contributions you, having including better documentation, tests, or more robust functionality. Please follow the [contributing guide](CONTRIBUTING.md)
+Would love any contributions by you, including better documentation, tests or more robust functionality. Please follow the [contributing guide](CONTRIBUTING.md)
 
 ## License
 [MIT](LICENSE)
