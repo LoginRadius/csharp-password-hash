@@ -9,6 +9,7 @@ namespace CSharpPasswordHash.Test
         {
             new object[] { HashingAlgo.SHA1},
             new object[] { HashingAlgo.SHA256},
+            new object[] { HashingAlgo.SHA512},
             new object[] { HashingAlgo.HMAC_SHA1},
             new object[] { HashingAlgo.HMAC_SHA256},
             new object[] { HashingAlgo.MD5 }
