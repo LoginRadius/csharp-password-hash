@@ -8,5 +8,7 @@
 
         public string SaltedPasswordFormat { get; set; }
         public EncodingType PasswordHashEncodingType { get; set; }
+
+        public int Pbkdf2Iterations { get; set; }
     }
 }
