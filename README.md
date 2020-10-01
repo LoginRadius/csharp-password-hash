@@ -8,7 +8,7 @@
 * Unit test cases to check the library fuctionality
 
 ## Getting Started
-* Must have the latest version of the Visual Studio
+* Must have the latest version of the Visual Studio Code
 
 Clone `csharp-password-hash` into your system using below commands:
 
@@ -18,7 +18,7 @@ git clone https://github.com/LoginRadius/csharp-password-hash
 cd csharp-password-hash
 csharp-password-hash.sln
 ```
-It will open the solution into the Visual Studio
+It will open the solution into the Visual Studio Code
 ## Usage
 Below are samples to show how you might use the library.
 
@@ -118,3 +118,4 @@ Would love any contributions you, having including better documentation, tests, 
 
 ## License
 [MIT](LICENSE)
+```also we can add image to our background```
