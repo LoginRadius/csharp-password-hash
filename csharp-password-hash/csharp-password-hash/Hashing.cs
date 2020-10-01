@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using HashLib;
 
 namespace CSharpPasswordHash
 {
@@ -140,6 +141,9 @@ namespace CSharpPasswordHash
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType);
 
+                case HashingAlgo.MD2:
+                    return CreateMd2(password, encodingType);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
@@ -160,6 +164,9 @@ namespace CSharpPasswordHash
                     return ToSHA256(password, encodingType) == hash;
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType) == hash;
+                case HashingAlgo.MD2:
+                    return CreateMd2(password, encodingType)==hash;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
@@ -173,6 +180,29 @@ namespace CSharpPasswordHash
                 Enumerable.Repeat(chars, 8)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
+        }
+        private static string CreateMd2(string inputValue, EncodingType encodingType)
+        {
+            byte[] inputValueBytes = Encoding.ASCII.GetBytes(inputValue);
+            return CreateMd2(inputValueBytes, encodingType);
+        }
+        private static string CreateMd2(byte[] inputValueBytes, EncodingType encodingType)
+        {
+            var hash = HashFactory.Crypto.CreateMD2();
+            var hashResult = hash.ComputeBytes(inputValueBytes);
+            var hashBytes = hashResult.GetBytes();
+
+            switch (encodingType)
+            {
+                case EncodingType.Default:
+                    return ConvertToHex(hashBytes);
+                case EncodingType.Base64:
+                    return Convert.ToBase64String(hashBytes);
+                case EncodingType.UTF8:
+                    return Encoding.UTF8.GetString(hashBytes);
+                default:
+                    return ConvertToHex(hashBytes);
+            }
         }
     }
 
