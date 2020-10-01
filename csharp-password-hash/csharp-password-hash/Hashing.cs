@@ -32,6 +32,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
@@ -82,6 +83,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
@@ -136,6 +138,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
