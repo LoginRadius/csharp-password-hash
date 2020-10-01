@@ -146,7 +146,7 @@ namespace CSharpPasswordHash
             }
         }
 
-        public static string EncryptPassword(string password, string salt, HashingAlgo hashingAlgo,
+        public static string HashPassword(string password, string salt, HashingAlgo hashingAlgo,
             EncodingType encodingType)
         {
             switch (hashingAlgo)
