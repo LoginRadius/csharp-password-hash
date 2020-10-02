@@ -26,31 +26,35 @@ namespace CSharpPasswordHash
 
         private static string CreateMd5(byte[] inputBytes, EncodingType encodingType)
         {
-            var md5 = MD5.Create();
-            byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-            switch (encodingType)
+            using (var md5 = MD5.Create())
             {
-                case EncodingType.Default:
-                case EncodingType.Hex:
-                    return ConvertToHex(hashBytes);
-                case EncodingType.Base64:
-                    return Convert.ToBase64String(hashBytes);
-                case EncodingType.UTF8:
-                    return Encoding.UTF8.GetString(hashBytes);
-                default:
-                    return ConvertToHex(hashBytes);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                switch (encodingType)
+                {
+                    case EncodingType.Default:
+                    case EncodingType.Hex:
+                        return ConvertToHex(hashBytes);
+                    case EncodingType.Base64:
+                        return Convert.ToBase64String(hashBytes);
+                    case EncodingType.UTF8:
+                        return Encoding.UTF8.GetString(hashBytes);
+                    default:
+                        return ConvertToHex(hashBytes);
+                }
             }
         }
         private static string ToHMAC_SHA256(string password, string key)
         {
-            var hmacSha = new HMACSHA256(Encoding.UTF8.GetBytes(key));
-            hmacSha.Initialize();
-            byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
+            using (var hmacSha = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
+            {
+                hmacSha.Initialize();
+                byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
 
-            var passwordHash = Encoding.UTF8.GetString(hmac);
+                var passwordHash = Encoding.UTF8.GetString(hmac);
 
-            return passwordHash;
+                return passwordHash;
+            }
         }
 
         private static string ToHMAC_SHA1(string password, string key)
