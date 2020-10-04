@@ -66,31 +66,15 @@ namespace CSharpPasswordHash
             return hashConfig.GenratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;
         }
         
-       public static (HashingAlgo hashingAlgo, EncodingType encodingType) GetAlgoDet(string password, string salt, string hash )
-        {
-              var isValidAlgo=false;
-              var result = (hashingAlgo: HashingAlgo.NONE, encodingType: EncodingType.Default);
-              foreach (string algo in Enum.GetNames(typeof(HashingAlgo)))  
-                {         
-                      HashingAlgo hashalgo = (HashingAlgo)Enum.Parse(typeof(HashingAlgo), algo);              
-                         
-                        foreach (string encodeType in Enum.GetNames(typeof(EncodingType)))  
-                             {                                                       
-                               EncodingType encodingType = (EncodingType)Enum.Parse(typeof(EncodingType), encodeType);
-                            
-                               isValidAlgo = CheckPassword(password, salt, hash, hashalgo, encodingType);
-  
-                                 if (isValidAlgo == true)
-                                        { 
-                                              result.hashingAlgo = hashalgo;
-                                              result.encodingType = encodingType;
-                                              return result; 
-                                        }  
-                                  
-                             }
+      public HashingConfig GetPossibleConfig(string password, string salt, string saltedPasswordFormat, string inputhash)
+       {
+	        var hashConfig  = new HashingConfig ();
+            var saltedPassword = GetSaltedPassword(password, salt, saltedPasswordFormat);   
                     
-                }  
-                return result;
+            var algoDet =  Hashing.GetAlgoDet(saltedPassword, salt, inputhash);             
+            hashConfig.HashingAlgo = algoDet.hashingAlgo;
+            hashConfig.PasswordHashEncodingType = algoDet.encodingType;
+            return hashConfig;
         }
     }
 }
