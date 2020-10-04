@@ -210,6 +210,9 @@ namespace CSharpPasswordHash
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbkdf2Iterations);
 
+                case HashingAlgo.NONE:
+                    return password;
+                    
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
@@ -234,6 +237,8 @@ namespace CSharpPasswordHash
                     return ToMd5(password, encodingType) == hash;
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash;
+                case HashingAlgo.NONE:
+                    return false;     
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
@@ -248,6 +253,34 @@ namespace CSharpPasswordHash
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
         }
+        
+       public static (HashingAlgo hashingAlgo, EncodingType encodingType) GetAlgoDet(string password, string salt, string hash )
+        {
+              var isValidAlgo=false;
+              var result = (hashingAlgo: HashingAlgo.NONE, encodingType: EncodingType.Default);
+              foreach (string algo in Enum.GetNames(typeof(HashingAlgo)))  
+                {         
+                      HashingAlgo hashalgo = (HashingAlgo)Enum.Parse(typeof(HashingAlgo), algo);              
+                         
+                        foreach (string encodeType in Enum.GetNames(typeof(EncodingType)))  
+                             {                                                       
+                               EncodingType encodingType = (EncodingType)Enum.Parse(typeof(EncodingType), encodeType);
+                            
+                               isValidAlgo = CheckPassword(password, salt, hash, hashalgo, encodingType);
+  
+                                 if (isValidAlgo == true)
+                                        { 
+                                              result.hashingAlgo = hashalgo;
+                                              result.encodingType = encodingType;
+                                              return result; 
+                                        }  
+                                  
+                             }
+                    
+                }  
+                return result;
+        }     
+        
     }
 
 }
