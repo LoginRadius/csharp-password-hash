@@ -60,7 +60,7 @@ namespace CSharpPasswordHash
 
             var saltedPassword = GetSaltedPassword(password, salt, hashConfig.SaltedPasswordFormat);
 
-            var passwordHash = Hashing.EncryptPassword(saltedPassword, salt, hashConfig.HashingAlgo,
+            var passwordHash = Hashing.HashPassword(saltedPassword, salt, hashConfig.HashingAlgo,
                 hashConfig.PasswordHashEncodingType, hashConfig.Pbkdf2Iterations);
 
             return hashConfig.GenratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;

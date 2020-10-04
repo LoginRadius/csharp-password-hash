@@ -155,7 +155,10 @@ namespace CSharpPasswordHash
             return ToPBKDF2(plainTextBytes, salt, encodingType, pbdkf2Iterations);
         }
         public static string ToPBKDF2(byte[] plainTextBytes, String salt, EncodingType encodingType, int pbdfk2Iterations)
-        {
+        {   
+            if(pbdfk2Iterations <= 0){
+                pbdfk2Iterations = 1;
+            }
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             const int DerivedKeyLength = 24;
             byte[] hashValue;
@@ -177,7 +180,7 @@ namespace CSharpPasswordHash
             }
         }
 
-        public static string EncryptPassword(string password, string salt, HashingAlgo hashingAlgo,
+        public static string HashPassword(string password, string salt, HashingAlgo hashingAlgo,
             EncodingType encodingType, int pbkdf2Iterations)
         {
             switch (hashingAlgo)
