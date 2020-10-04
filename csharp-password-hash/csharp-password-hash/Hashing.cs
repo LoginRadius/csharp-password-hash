@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -59,7 +60,7 @@ namespace CSharpPasswordHash
             {
                 hmacSha.Initialize();
                 byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
-                
+
                 var passwordHash = Encoding.UTF8.GetString(hmac);
 
                 return passwordHash;
@@ -148,9 +149,39 @@ namespace CSharpPasswordHash
                     return ConvertToHex(hashBytes);
             }
         }
+        private static string ToPBKDF2(string str, String salt, EncodingType encodingType, int pbdkf2Iterations)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
+            return ToPBKDF2(plainTextBytes, salt, encodingType, pbdkf2Iterations);
+        }
+        public static string ToPBKDF2(byte[] plainTextBytes, String salt, EncodingType encodingType, int pbdfk2Iterations)
+        {   
+            if(pbdfk2Iterations <= 0){
+                pbdfk2Iterations = 1;
+            }
+            byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
+            const int DerivedKeyLength = 24;
+            byte[] hashValue;
+            using (var pbkdf2 = new Rfc2898DeriveBytes(plainTextBytes, saltBytes, pbdfk2Iterations))
+            {
+                hashValue = pbkdf2.GetBytes(DerivedKeyLength);
+
+            }
+            switch (encodingType)
+            {
+                case EncodingType.Default:
+                    return ConvertToHex(hashValue);
+                case EncodingType.Base64:
+                    return Convert.ToBase64String(hashValue);
+                case EncodingType.UTF8:
+                    return Encoding.UTF8.GetString(hashValue);
+                default:
+                    return ConvertToHex(hashValue);
+            }
+        }
 
         public static string HashPassword(string password, string salt, HashingAlgo hashingAlgo,
-            EncodingType encodingType)
+            EncodingType encodingType, int pbkdf2Iterations)
         {
             switch (hashingAlgo)
             {
@@ -172,13 +203,16 @@ namespace CSharpPasswordHash
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType);
 
+                case HashingAlgo.PBKDF2:
+                    return ToPBKDF2(password, salt, encodingType, pbkdf2Iterations);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
         }
 
         public static bool CheckPassword(string password, string salt, string hash, HashingAlgo hashingAlgo,
-            EncodingType encodingType)
+            EncodingType encodingType, int pbdfk2Iterations)
         {
             switch (hashingAlgo)
             {
@@ -194,6 +228,8 @@ namespace CSharpPasswordHash
                     return ToSHA512(password, encodingType) == hash;
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType) == hash;
+                case HashingAlgo.PBKDF2:
+                    return ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashingAlgo));
             }
