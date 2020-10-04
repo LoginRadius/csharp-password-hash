@@ -33,6 +33,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
@@ -83,6 +84,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
@@ -93,6 +95,32 @@ namespace CSharpPasswordHash
             }
         }
 
+        private static string ToSHA512(string str, EncodingType encodingType)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
+            return ToSHA512(plainTextBytes, encodingType);
+        }
+
+        private static string ToSHA512(byte[] plainTextBytes, EncodingType encodingType)
+        {
+            byte[] hashBytes;
+            using (var hash = SHA512.Create())
+            {
+                hashBytes = hash.ComputeHash(plainTextBytes);
+            }
+
+            switch (encodingType)
+            {
+                case EncodingType.Default:
+                    return ConvertToHex(hashBytes);
+                case EncodingType.Base64:
+                    return Convert.ToBase64String(hashBytes);
+                case EncodingType.UTF8:
+                    return Encoding.UTF8.GetString(hashBytes);
+                default:
+                    return ConvertToHex(hashBytes);
+            }
+        }
         private static string ToSHA1(string str, EncodingType encodingType)
         {
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
@@ -111,6 +139,7 @@ namespace CSharpPasswordHash
             switch (encodingType)
             {
                 case EncodingType.Default:
+                case EncodingType.Hex:
                     return ConvertToHex(hashBytes);
                 case EncodingType.Base64:
                     return Convert.ToBase64String(hashBytes);
@@ -121,7 +150,7 @@ namespace CSharpPasswordHash
             }
         }
 
-        public static string EncryptPassword(string password, string salt, HashingAlgo hashingAlgo,
+        public static string HashPassword(string password, string salt, HashingAlgo hashingAlgo,
             EncodingType encodingType)
         {
             switch (hashingAlgo)
@@ -138,6 +167,9 @@ namespace CSharpPasswordHash
                 case HashingAlgo.SHA256:
                     return ToSHA256(password, encodingType);
 
+                case HashingAlgo.SHA512:
+                    return ToSHA512(password, encodingType);
+                
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType);
 
@@ -162,6 +194,8 @@ namespace CSharpPasswordHash
                     return ToSHA1(password, encodingType) == hash;
                 case HashingAlgo.SHA256:
                     return ToSHA256(password, encodingType) == hash;
+                case HashingAlgo.SHA512:
+                    return ToSHA512(password, encodingType) == hash;
                 case HashingAlgo.MD5:
                     return ToMd5(password, encodingType) == hash;
                 case HashingAlgo.MD2:
