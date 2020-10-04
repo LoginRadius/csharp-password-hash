@@ -110,10 +110,11 @@ namespace CSharpPasswordHash.Test
                 Assert.False(match);
             }
 
-            [Theory]
+            [SkippableTheory]
             [ClassData(typeof(TestDataGenerator))]
             public void Correct_Password_Wrong_Encoding_Should_Not_Match(HashingAlgo hashingAlgo)
             {
+                Skip.If(hashingAlgo == HashingAlgo.HMAC_SHA1 || hashingAlgo == HashingAlgo.HMAC_SHA256);
                 var originalHashConfig = new HashingConfig
                 {
                     GenratePerPasswordSalt = true,
