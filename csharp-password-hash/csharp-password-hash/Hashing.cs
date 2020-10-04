@@ -19,140 +19,48 @@ namespace CSharpPasswordHash
             return sb.ToString();
         }
 
-        private static string ToMd5(string input, EncodingType encodingType)
-        {
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-            return CreateMd5(inputBytes, encodingType);
-        }
-
-        private static string CreateMd5(byte[] inputBytes, EncodingType encodingType)
-        {
-            using (var md5 = MD5.Create())
-            {
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                switch (encodingType)
-                {
-                    case EncodingType.Default:
-                    case EncodingType.Hex:
-                        return ConvertToHex(hashBytes);
-                    case EncodingType.Base64:
-                        return Convert.ToBase64String(hashBytes);
-                    case EncodingType.UTF8:
-                        return Encoding.UTF8.GetString(hashBytes);
-                    default:
-                        return ConvertToHex(hashBytes);
-                }
-            }
-        }
-        private static string ToHMAC_SHA256(string password, string key)
+        private static string ToHMAC_SHA256(string password, string key, EncodingType encodingType)
         {
             using (var hmacSha = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
             {
                 hmacSha.Initialize();
-                byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                var passwordHash = Encoding.UTF8.GetString(hmac);
-
-                return passwordHash;
+                return Encode(hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password)), encodingType);
             }
         }
 
-        private static string ToHMAC_SHA1(string password, string key)
+        private static string ToHMAC_SHA1(string password, string key, EncodingType encodingType)
         {
             using (var hmacSha = new HMACSHA1(Encoding.UTF8.GetBytes(key)))
             {
                 hmacSha.Initialize();
-                byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                var passwordHash = Encoding.UTF8.GetString(hmac);
-
-                return passwordHash;
+                return Encode(hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password)), encodingType);
             }
         }
 
-        private static string ToSHA256(string str, EncodingType encodingType)
+        private static string ToHashAlgorithm(HashAlgorithm hashAlgorithm, byte[] plainTextBytes, EncodingType encodingType)
         {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            return ToSHA256(plainTextBytes, encodingType);
-        }
-
-        private static string ToSHA256(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA256.Create())
+            using (hashAlgorithm)
             {
-                hashBytes = hash.ComputeHash(plainTextBytes);
+                return Encode(hashAlgorithm.ComputeHash(plainTextBytes), encodingType);
             }
+        }
 
+        private static string Encode(byte[] bytes, EncodingType encodingType)
+        {
             switch (encodingType)
             {
                 case EncodingType.Default:
                 case EncodingType.Hex:
-                    return ConvertToHex(hashBytes);
+                    return ConvertToHex(bytes);
                 case EncodingType.Base64:
-                    return Convert.ToBase64String(hashBytes);
+                    return Convert.ToBase64String(bytes);
                 case EncodingType.UTF8:
-                    return Encoding.UTF8.GetString(hashBytes);
+                    return Encoding.UTF8.GetString(bytes);
                 default:
-                    return ConvertToHex(hashBytes);
+                    return ConvertToHex(bytes);
             }
         }
 
-        private static string ToSHA512(string str, EncodingType encodingType)
-        {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            return ToSHA512(plainTextBytes, encodingType);
-        }
-
-        private static string ToSHA512(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA512.Create())
-            {
-                hashBytes = hash.ComputeHash(plainTextBytes);
-            }
-
-            switch (encodingType)
-            {
-                case EncodingType.Default:
-                    return ConvertToHex(hashBytes);
-                case EncodingType.Base64:
-                    return Convert.ToBase64String(hashBytes);
-                case EncodingType.UTF8:
-                    return Encoding.UTF8.GetString(hashBytes);
-                default:
-                    return ConvertToHex(hashBytes);
-            }
-        }
-        private static string ToSHA1(string str, EncodingType encodingType)
-        {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            var sha1Password = ToSHA1(plainTextBytes, encodingType);
-            return sha1Password;
-        }
-
-        private static string ToSHA1(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA1.Create())
-            {
-                hashBytes = hash.ComputeHash(plainTextBytes);
-            }
-
-            switch (encodingType)
-            {
-                case EncodingType.Default:
-                case EncodingType.Hex:
-                    return ConvertToHex(hashBytes);
-                case EncodingType.Base64:
-                    return Convert.ToBase64String(hashBytes);
-                case EncodingType.UTF8:
-                    return Encoding.UTF8.GetString(hashBytes);
-                default:
-                    return ConvertToHex(hashBytes);
-            }
-        }
         private static string ToPBKDF2(string str, String salt, EncodingType encodingType, int pbdkf2Iterations)
         {
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
@@ -190,22 +98,22 @@ namespace CSharpPasswordHash
             switch (hashingAlgo)
             {
                 case HashingAlgo.HMAC_SHA1:
-                    return ToHMAC_SHA1(password, salt);
+                    return ToHMAC_SHA1(password, salt, encodingType);
 
                 case HashingAlgo.HMAC_SHA256:
-                    return ToHMAC_SHA256(password, salt);
+                    return ToHMAC_SHA256(password, salt, encodingType);
 
                 case HashingAlgo.SHA1:
-                    return ToSHA1(password, encodingType);
+                    return ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType);
 
                 case HashingAlgo.SHA256:
-                    return ToSHA256(password, encodingType);
+                    return ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType);
 
                 case HashingAlgo.SHA512:
-                    return ToSHA512(password, encodingType);
+                    return ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType);
                 
                 case HashingAlgo.MD5:
-                    return ToMd5(password, encodingType);
+                    return ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType);
 
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbkdf2Iterations);
@@ -224,17 +132,17 @@ namespace CSharpPasswordHash
             switch (hashingAlgo)
             {
                 case HashingAlgo.HMAC_SHA1:
-                    return ToHMAC_SHA1(password, salt) == hash;
+                    return ToHMAC_SHA1(password, salt, encodingType) == hash;
                 case HashingAlgo.HMAC_SHA256:
-                    return ToHMAC_SHA256(password, salt) == hash;
+                    return ToHMAC_SHA256(password, salt, encodingType) == hash;
                 case HashingAlgo.SHA1:
-                    return ToSHA1(password, encodingType) == hash;
+                    return ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash;
                 case HashingAlgo.SHA256:
-                    return ToSHA256(password, encodingType) == hash;
+                    return ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash;
                 case HashingAlgo.SHA512:
-                    return ToSHA512(password, encodingType) == hash;
+                    return ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash;
                 case HashingAlgo.MD5:
-                    return ToMd5(password, encodingType) == hash;
+                    return ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType) == hash;
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash;
                 case HashingAlgo.NONE:
