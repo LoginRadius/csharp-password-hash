@@ -219,7 +219,7 @@ namespace CSharpPasswordHash
         }
 
         public static bool CheckPassword(string password, string salt, string hash, HashingAlgo hashingAlgo,
-            EncodingType encodingType, int pbdfk2Iterations)
+            EncodingType encodingType, int pbdfk2Iterations=0)
         {
             switch (hashingAlgo)
             {
