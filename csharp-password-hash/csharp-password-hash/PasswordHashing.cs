@@ -65,16 +65,17 @@ namespace CSharpPasswordHash
 
             return hashConfig.GenratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;
         }
-        
-      public HashingConfig GetPossibleConfig(string password, string salt, string saltedPasswordFormat, string inputhash)
-       {
-	        var hashConfig  = new HashingConfig ();
-            var saltedPassword = GetSaltedPassword(password, salt, saltedPasswordFormat);   
-                    
-            var algoDet =  Hashing.GetAlgoDet(saltedPassword, salt, inputhash);             
-            hashConfig.HashingAlgo = algoDet.hashingAlgo;
-            hashConfig.PasswordHashEncodingType = algoDet.encodingType;
-            return hashConfig;
+
+        public HashingConfig GetPossibleConfig(string password, string salt, string saltedPasswordFormat, string inputhash)
+        {
+            var saltedPassword = GetSaltedPassword(password, salt, saltedPasswordFormat);
+
+            var (hashingAlgo, encodingType) = Hashing.GetAlgoDet(saltedPassword, salt, inputhash);
+            return new HashingConfig
+            {
+                HashingAlgo = hashingAlgo,
+                PasswordHashEncodingType = encodingType
+            };
         }
     }
 }
