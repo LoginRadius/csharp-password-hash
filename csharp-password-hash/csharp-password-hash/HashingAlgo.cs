@@ -9,6 +9,7 @@
         SHA256 = 4,
         HMAC_SHA256 = 5,
         SHA512 = 6,
-        PBKDF2 = 7
+        PBKDF2 = 7,
+        BCRYPT = 8
     }
 }
