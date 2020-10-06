@@ -215,10 +215,10 @@ namespace CSharpPasswordHash
 
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbkdf2Iterations);
-                
+
                 case HashingAlgo.BCRYPT:
                     return ToBCRYPT(password, salt);
-                    
+
                 case HashingAlgo.NONE:
                     return password;
                     
@@ -228,7 +228,7 @@ namespace CSharpPasswordHash
         }
 
         public static bool CheckPassword(string password, string salt, string hash, HashingAlgo hashingAlgo,
-            EncodingType encodingType, int pbdfk2Iterations)
+            EncodingType encodingType, int pbdfk2Iterations=0)
         {
             switch (hashingAlgo)
             {
