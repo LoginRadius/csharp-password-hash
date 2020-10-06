@@ -18,94 +18,42 @@ namespace CSharpPasswordHash
             return sb.ToString();
         }
 
-        private static string ToMd5(string input, EncodingType encodingType)
-        {
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-            return CreateMd5(inputBytes, encodingType);
-        }
-
-        private static string CreateMd5(byte[] inputBytes, EncodingType encodingType)
-        {
-            using var md5 = MD5.Create();
-            byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-            return Encode(hashBytes, encodingType);
-        }
-
-        private static string ToHMAC_SHA256(string password, string key)
+        private static string ToHMAC_SHA256(string password, string key, EncodingType encodingType)
         {
             using var hmacSha = new HMACSHA256(Encoding.UTF8.GetBytes(key));
 
             hmacSha.Initialize();
-            byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-            var passwordHash = Encoding.UTF8.GetString(hmac);
-
-            return passwordHash;
+            return Encode(hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password)), encodingType);
         }
 
-        private static string ToHMAC_SHA1(string password, string key)
+        private static string ToHMAC_SHA1(string password, string key, EncodingType encodingType)
         {
             using var hmacSha = new HMACSHA1(Encoding.UTF8.GetBytes(key));
 
             hmacSha.Initialize();
-            byte[] hmac = hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-            var passwordHash = Encoding.UTF8.GetString(hmac);
-
-            return passwordHash;
+            return Encode(hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password)), encodingType);
         }
 
-        private static string ToSHA256(string str, EncodingType encodingType)
+        private static string ToHashAlgorithm(HashAlgorithm hashAlgorithm, byte[] plainTextBytes, EncodingType encodingType)
         {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            return ToSHA256(plainTextBytes, encodingType);
-        }
-
-        private static string ToSHA256(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA256.Create())
+            using (hashAlgorithm)
             {
-                hashBytes = hash.ComputeHash(plainTextBytes);
+                return Encode(hashAlgorithm.ComputeHash(plainTextBytes), encodingType);
             }
-
-            return Encode(hashBytes, encodingType);
         }
 
-        private static string ToSHA512(string str, EncodingType encodingType)
+        private static string Encode(byte[] hashBytes, EncodingType encodingType)
         {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            return ToSHA512(plainTextBytes, encodingType);
-        }
-
-        private static string ToSHA512(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA512.Create())
+            return encodingType switch
             {
-                hashBytes = hash.ComputeHash(plainTextBytes);
-            }
-
-            return Encode(hashBytes, encodingType);
-        }
-        private static string ToSHA1(string str, EncodingType encodingType)
-        {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
-            var sha1Password = ToSHA1(plainTextBytes, encodingType);
-            return sha1Password;
+                EncodingType.Base64 => Convert.ToBase64String(hashBytes),
+                EncodingType.UTF8 => Encoding.UTF8.GetString(hashBytes),
+                EncodingType.Hex => ConvertToHex(hashBytes),
+                EncodingType.Default => ConvertToHex(hashBytes),
+                _ => ConvertToHex(hashBytes)
+            };
         }
 
-        private static string ToSHA1(byte[] plainTextBytes, EncodingType encodingType)
-        {
-            byte[] hashBytes;
-            using (var hash = SHA1.Create())
-            {
-                hashBytes = hash.ComputeHash(plainTextBytes);
-            }
-
-            return Encode(hashBytes, encodingType);
-        }
         private static string ToPBKDF2(string str, String salt, EncodingType encodingType, int pbdkf2Iterations)
         {
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(str);
@@ -133,12 +81,12 @@ namespace CSharpPasswordHash
         {
             return hashingAlgo switch
             {
-                HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt),
-                HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt),
-                HashingAlgo.SHA1 => ToSHA1(password, encodingType),
-                HashingAlgo.SHA256 => ToSHA256(password, encodingType),
-                HashingAlgo.SHA512 => ToSHA512(password, encodingType),
-                HashingAlgo.MD5 => ToMd5(password, encodingType),
+                HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt, encodingType),
+                HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt, encodingType),
+                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType),
+                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType),
+                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType),
+                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType),
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbkdf2Iterations),
                 HashingAlgo.NONE => password,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
@@ -150,12 +98,12 @@ namespace CSharpPasswordHash
         {
             return hashingAlgo switch
             {
-                HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt) == hash,
-                HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt) == hash,
-                HashingAlgo.SHA1 => ToSHA1(password, encodingType) == hash,
-                HashingAlgo.SHA256 => ToSHA256(password, encodingType) == hash,
-                HashingAlgo.SHA512 => ToSHA512(password, encodingType) == hash,
-                HashingAlgo.MD5 => ToMd5(password, encodingType) == hash,
+                HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt, encodingType) == hash,
+                HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt, encodingType) == hash,
+                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
+                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
+                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
+                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType) == hash,
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash,
                 HashingAlgo.NONE => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
@@ -194,18 +142,6 @@ namespace CSharpPasswordHash
                 }
             }
             return result;
-        }
-
-        private static string Encode(byte[] hashBytes, EncodingType encodingType)
-        {
-            return encodingType switch
-            {
-                EncodingType.Base64 => Convert.ToBase64String(hashBytes),
-                EncodingType.UTF8 => Encoding.UTF8.GetString(hashBytes),
-                EncodingType.Hex => ConvertToHex(hashBytes),
-                EncodingType.Default => ConvertToHex(hashBytes),
-                _ => ConvertToHex(hashBytes)
-            };
         }
     }
 }
