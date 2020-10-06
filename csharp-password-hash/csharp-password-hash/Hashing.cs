@@ -3,6 +3,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using BCrypt.Net;
 
 namespace CSharpPasswordHash
 {
@@ -92,6 +93,11 @@ namespace CSharpPasswordHash
             }
         }
 
+        private static ToBCRYPT(string password, string salt)
+        {
+             return BCrypt.HashPassword(password, salt);     
+        }
+        
         public static string HashPassword(string password, string salt, HashingAlgo hashingAlgo,
             EncodingType encodingType, int pbkdf2Iterations)
         {
@@ -117,6 +123,9 @@ namespace CSharpPasswordHash
 
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbkdf2Iterations);
+
+                case HashingAlgo.BCRYPT:
+                    return ToBCRYPT(password, salt);
 
                 case HashingAlgo.NONE:
                     return password;
@@ -145,6 +154,8 @@ namespace CSharpPasswordHash
                     return ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType) == hash;
                 case HashingAlgo.PBKDF2:
                     return ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash;
+                case HashingAlgo.BCRYPT:
+                    return ToBCRYPT(password, salt) == hash;    
                 case HashingAlgo.NONE:
                     return false;     
                 default:
