@@ -108,7 +108,7 @@ namespace CSharpPasswordHash
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash,
                 HashingAlgo.NONE => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
-            }
+            };
         }
 
         public static string GenerateSalt()
