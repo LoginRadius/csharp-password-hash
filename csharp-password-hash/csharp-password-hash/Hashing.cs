@@ -42,15 +42,15 @@ namespace CSharpPasswordHash
             }
         }
 
-        private static string Encode(byte[] hashBytes, EncodingType encodingType)
+        private static string Encode(byte[] bytes, EncodingType encodingType)
         {
             return encodingType switch
             {
-                EncodingType.Base64 => Convert.ToBase64String(hashBytes),
-                EncodingType.UTF8 => Encoding.UTF8.GetString(hashBytes),
-                EncodingType.Hex => ConvertToHex(hashBytes),
-                EncodingType.Default => ConvertToHex(hashBytes),
-                _ => ConvertToHex(hashBytes)
+                EncodingType.Base64 => Convert.ToBase64String(bytes),
+                EncodingType.UTF8 => Encoding.UTF8.GetString(bytes),
+                EncodingType.Hex => ConvertToHex(bytes),
+                EncodingType.Default => ConvertToHex(bytes),
+                _ => ConvertToHex(bytes)
             };
         }
 
