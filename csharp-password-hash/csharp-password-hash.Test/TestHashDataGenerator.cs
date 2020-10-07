@@ -9,7 +9,7 @@ namespace CSharpPasswordHash.Test
         {
             /* Hash values generated using the following HashingConfig
              {CSharpPasswordHash.HashingConfig}
-	         GenratePerPasswordSalt: false
+	         GeneratePerPasswordSalt: false
 	         GlobalSalt: "SecureSalt"
 	         HashingAlgo: 
 	         PasswordHashEncodingType: CSharpPasswordHash.EncodingType.Default
