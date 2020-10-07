@@ -2,12 +2,14 @@
 {
     public enum HashingAlgo
     {
-        HMAC_SHA1 = 0,
-        MD5 = 1,
-        SHA1 = 2,
-        SHA256 = 3,
-        HMAC_SHA256 = 4,
-        SHA512 = 5,
-        MD2=6
-    }
+        NONE = 0,
+        HMAC_SHA1 = 1,
+        MD5 = 2,
+        SHA1 = 3,
+        SHA256 = 4,
+        HMAC_SHA256 = 5,
+        SHA512 = 6,
+        PBKDF2 = 7,
+        MD2=8
+}
 }

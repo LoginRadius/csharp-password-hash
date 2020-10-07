@@ -46,9 +46,9 @@ namespace CSharpPasswordHash
 
             var saltedPassword = GetSaltedPassword(oldPassword, salt, globalFormattedSalt);
 
-            var isValidPassword = Hashing.CheckPassword(saltedPassword,salt, passwordHash, passwordEncryption.HashingAlgo,
-                passwordEncryption.PasswordHashEncodingType);
-           
+            var isValidPassword = Hashing.CheckPassword(saltedPassword, salt, passwordHash, passwordEncryption.HashingAlgo,
+                passwordEncryption.PasswordHashEncodingType, passwordEncryption.Pbkdf2Iterations);
+
             return isValidPassword;
         }
 
@@ -60,10 +60,22 @@ namespace CSharpPasswordHash
 
             var saltedPassword = GetSaltedPassword(password, salt, hashConfig.SaltedPasswordFormat);
 
-            var passwordHash = Hashing.HashPassword(saltedPassword,salt, hashConfig.HashingAlgo,
-                hashConfig.PasswordHashEncodingType);
+            var passwordHash = Hashing.HashPassword(saltedPassword, salt, hashConfig.HashingAlgo,
+                hashConfig.PasswordHashEncodingType, hashConfig.Pbkdf2Iterations);
 
             return hashConfig.GenratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;
+        }
+
+        public HashingConfig GetPossibleConfig(string password, string salt, string saltedPasswordFormat, string inputhash)
+        {
+            var saltedPassword = GetSaltedPassword(password, salt, saltedPasswordFormat);
+
+            var (hashingAlgo, encodingType) = Hashing.GetAlgoDet(saltedPassword, salt, inputhash);
+            return new HashingConfig
+            {
+                HashingAlgo = hashingAlgo,
+                PasswordHashEncodingType = encodingType
+            };
         }
     }
 }

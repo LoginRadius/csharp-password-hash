@@ -12,7 +12,8 @@ namespace CSharpPasswordHash.Test
             new object[] { HashingAlgo.SHA512},
             new object[] { HashingAlgo.HMAC_SHA1},
             new object[] { HashingAlgo.HMAC_SHA256},
-            new object[] { HashingAlgo.MD5 }
+            new object[] { HashingAlgo.MD5 },
+            new object[] {HashingAlgo.PBKDF2},
         };
 
         public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
