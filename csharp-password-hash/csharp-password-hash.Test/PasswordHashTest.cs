@@ -16,7 +16,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -36,7 +36,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -56,7 +56,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -76,7 +76,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -96,7 +96,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -117,7 +117,7 @@ namespace CSharpPasswordHash.Test
                 Skip.If(hashingAlgo == HashingAlgo.HMAC_SHA1 || hashingAlgo == HashingAlgo.HMAC_SHA256);
                 var originalHashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -126,7 +126,7 @@ namespace CSharpPasswordHash.Test
 
                 var mismatchedHashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = true,
+                    GeneratePerPasswordSalt = true,
                     GlobalSalt = null,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -149,7 +149,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = false,
+                    GeneratePerPasswordSalt = false,
                     GlobalSalt = GlobalSalt,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -169,7 +169,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = false,
+                    GeneratePerPasswordSalt = false,
                     GlobalSalt = GlobalSalt,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -192,7 +192,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = false,
+                    GeneratePerPasswordSalt = false,
                     GlobalSalt = GlobalSalt,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,
@@ -212,7 +212,7 @@ namespace CSharpPasswordHash.Test
             {
                 var hashConfig = new HashingConfig
                 {
-                    GenratePerPasswordSalt = false,
+                    GeneratePerPasswordSalt = false,
                     GlobalSalt = GlobalSalt,
                     SaltedPasswordFormat = SaltedPasswordFormat,
                     HashingAlgo = hashingAlgo,

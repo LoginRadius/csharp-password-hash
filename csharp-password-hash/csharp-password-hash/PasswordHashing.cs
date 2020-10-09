@@ -9,7 +9,7 @@ namespace CSharpPasswordHash
         {
             var result = (salt: string.Empty, passwordHash: String.Empty, globalFormattedSalt: string.Empty);
 
-            if (passwordEncryption.GenratePerPasswordSalt)
+            if (passwordEncryption.GeneratePerPasswordSalt)
             {
                 var idx = oldPassword.LastIndexOf(':');
                 if (idx != -1)
@@ -54,7 +54,7 @@ namespace CSharpPasswordHash
 
         public string GetHash(string password, HashingConfig hashConfig)
         {
-            var salt = hashConfig.GenratePerPasswordSalt
+            var salt = hashConfig.GeneratePerPasswordSalt
                 ? Hashing.GenerateSalt()
                     : hashConfig.GlobalSalt;
 
@@ -63,7 +63,7 @@ namespace CSharpPasswordHash
             var passwordHash = Hashing.HashPassword(saltedPassword, salt, hashConfig.HashingAlgo,
                 hashConfig.PasswordHashEncodingType, hashConfig.Pbkdf2Iterations);
 
-            return hashConfig.GenratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;
+            return hashConfig.GeneratePerPasswordSalt ? $"{passwordHash}:{salt}" : passwordHash;
         }
 
         public HashingConfig GetPossibleConfig(string password, string salt, string saltedPasswordFormat, string inputhash)

@@ -38,21 +38,21 @@ var userObject = new User
   Password = "Test#11"
 };
 ```
-### Example 1 - Create HashConfig object (When GenratePerPasswordSalt is true)
+### Example 1 - Create HashConfig object (When GeneratePerPasswordSalt is true)
 ```C#
 //Create HashConfig object and set below properties
 var hashConfig = new HashingConfig
 {
-  GenratePerPasswordSalt = true, // This property is used when we have generate different password salt
+  GeneratePerPasswordSalt = true, // This property is used when we have generate different password salt
   GlobalSalt = null, // This is used when we have to use the same salt for every password
   SaltedPasswordFormat = "#PasswordPlaceHolder#--#SaltPlaceHolder#",// Format which will be used in salted password 
   HashingAlgo = HashingAlgo.MD5, // Hashing algo which we want to use
   PasswordHashEncodingType = EncodingType.Default // Encoding type for password hashing
 };
 ```
-### Check password (When GenratePerPasswordSalt is true)
+### Check password (When GeneratePerPasswordSalt is true)
 ```C#
-//Combine the user object and HashConfig object (When GenratePerPasswordSalt is true)
+//Combine the user object and HashConfig object (When GeneratePerPasswordSalt is true)
 //Create method to check password
 public void ValidatePassword()
 {
@@ -63,7 +63,7 @@ public void ValidatePassword()
   };
   var hashConfig = new HashingConfig
   {
-    GenratePerPasswordSalt = true,
+    GeneratePerPasswordSalt = true,
     GlobalSalt = null,
     SaltedPasswordFormat = "#PasswordPlaceHolder#--#SaltPlaceHolder#",
     HashingAlgo = HashingAlgo.MD5,
@@ -75,22 +75,22 @@ public void ValidatePassword()
 }
 ```
 
-### Example 2 - Create HashConfig object (When GenratePerPasswordSalt is false)
+### Example 2 - Create HashConfig object (When GeneratePerPasswordSalt is false)
 ```C#
 //In that case we have to set the GlobalSalt property
 //Create HashConfig object and set below properties
 var hashConfig = new HashingConfig
 {
-  GenratePerPasswordSalt = false, \
+  GeneratePerPasswordSalt = false, \
   GlobalSalt = SecureSalt, 
   SaltedPasswordFormat = "#PasswordPlaceHolder#--#SaltPlaceHolder#",
   HashingAlgo = HashingAlgo.MD5, 
   PasswordHashEncodingType = EncodingType.Default 
 };
 ```
-### Check password (When GenratePerPasswordSalt is false)
+### Check password (When GeneratePerPasswordSalt is false)
 ```C#
-//Combine the user object and HashConfig object (When GenratePerPasswordSalt is false)
+//Combine the user object and HashConfig object (When GeneratePerPasswordSalt is false)
 //Create method to check password
 public void ValidatePassword()
 {
@@ -101,7 +101,7 @@ public void ValidatePassword()
   };
   var hashConfig = new HashingConfig
   {
-    GenratePerPasswordSalt = false,
+    GeneratePerPasswordSalt = false,
     GlobalSalt = "SecureSalt",
     SaltedPasswordFormat = "#PasswordPlaceHolder#--#SaltPlaceHolder#",
     HashingAlgo = HashingAlgo.MD5,
