@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using HashLib;
 
 namespace CSharpPasswordHash
 {
@@ -89,6 +90,7 @@ namespace CSharpPasswordHash
                 HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), password, encodingType),
                 HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), password, encodingType),
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbkdf2Iterations),
+                HashingAlgo.MD2 => CreateMd2(password, encodingType),
                 HashingAlgo.NONE => password,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
             };
@@ -106,6 +108,7 @@ namespace CSharpPasswordHash
                 HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), password, encodingType) == hash,
                 HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), password, encodingType) == hash,
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash,
+                HashingAlgo.MD2 => CreateMd2(password,encodingType) == hash,
                 HashingAlgo.NONE => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
             };
@@ -119,6 +122,29 @@ namespace CSharpPasswordHash
                 Enumerable.Repeat(chars, 8)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
+        }
+        private static string CreateMd2(string inputValue, EncodingType encodingType)
+        {
+            byte[] inputValueBytes = Encoding.ASCII.GetBytes(inputValue);
+            return CreateMd2(inputValueBytes, encodingType);
+        }
+        private static string CreateMd2(byte[] inputValueBytes, EncodingType encodingType)
+        {
+            var hash = HashFactory.Crypto.CreateMD2();
+            var hashResult = hash.ComputeBytes(inputValueBytes);
+            var hashBytes = hashResult.GetBytes();
+
+            switch (encodingType)
+            {
+                case EncodingType.Default:
+                    return ConvertToHex(hashBytes);
+                case EncodingType.Base64:
+                    return Convert.ToBase64String(hashBytes);
+                case EncodingType.UTF8:
+                    return Encoding.UTF8.GetString(hashBytes);
+                default:
+                    return ConvertToHex(hashBytes);
+            }
         }
 
         public static (HashingAlgo hashingAlgo, EncodingType encodingType) GetAlgoDet(string password, string salt, string hash)
