@@ -34,8 +34,9 @@ namespace CSharpPasswordHash
             return Encode(hmacSha.ComputeHash(Encoding.UTF8.GetBytes(password)), encodingType);
         }
 
-        private static string ToHashAlgorithm(HashAlgorithm hashAlgorithm, byte[] plainTextBytes, EncodingType encodingType)
+        private static string ToHashAlgorithm(HashAlgorithm hashAlgorithm, string password, EncodingType encodingType)
         {
+            var plainTextBytes = Encoding.UTF8.GetBytes(password);
             using (hashAlgorithm)
             {
                 return Encode(hashAlgorithm.ComputeHash(plainTextBytes), encodingType);
@@ -83,10 +84,10 @@ namespace CSharpPasswordHash
             {
                 HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt, encodingType),
                 HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt, encodingType),
-                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType),
-                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType),
-                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType),
-                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType),
+                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), password, encodingType),
+                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), password, encodingType),
+                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), password, encodingType),
+                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), password, encodingType),
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbkdf2Iterations),
                 HashingAlgo.NONE => password,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
@@ -100,10 +101,10 @@ namespace CSharpPasswordHash
             {
                 HashingAlgo.HMAC_SHA1 => ToHMAC_SHA1(password, salt, encodingType) == hash,
                 HashingAlgo.HMAC_SHA256 => ToHMAC_SHA256(password, salt, encodingType) == hash,
-                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
-                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
-                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), Encoding.UTF8.GetBytes(password), encodingType) == hash,
-                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), Encoding.ASCII.GetBytes(password), encodingType) == hash,
+                HashingAlgo.SHA1 => ToHashAlgorithm(SHA1.Create(), password, encodingType) == hash,
+                HashingAlgo.SHA256 => ToHashAlgorithm(SHA256.Create(), password, encodingType) == hash,
+                HashingAlgo.SHA512 => ToHashAlgorithm(SHA512.Create(), password, encodingType) == hash,
+                HashingAlgo.MD5 => ToHashAlgorithm(MD5.Create(), password, encodingType) == hash,
                 HashingAlgo.PBKDF2 => ToPBKDF2(password, salt, encodingType, pbdfk2Iterations) == hash,
                 HashingAlgo.NONE => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(hashingAlgo))
