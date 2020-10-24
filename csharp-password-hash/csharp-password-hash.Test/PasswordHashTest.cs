@@ -7,6 +7,7 @@ namespace CSharpPasswordHash.Test
         private const string GlobalSalt= "SecureSalt";
         private const string CorrectPassword = "CorrectPassword";
         private const string SaltedPasswordFormat = Constants.PasswordPlaceHolder+"--"+Constants.SaltPlaceHolder;
+        private const string DefaultSaltedPasswordFormat = "#PasswordPlaceHolder#--#SaltPlaceHolder#";
 
         public class WhenPerPasswordSaltTrue
         {
@@ -224,6 +225,17 @@ namespace CSharpPasswordHash.Test
                 var hashExpected = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(expectedHashBase64));
 
                 Assert.Equal(hashExpected,hashActual);
+            }
+
+            [Theory]
+            [ClassData(typeof(TestHashFinderDataGenerator))]
+            public void Correct_Hashing_Config_Should_Match_GetPossibleConfig(HashingAlgo expectedHashingAlgo, EncodingType expectedEncodingType, string inputHash)
+            {
+                var passwordHashing = new PasswordHashing();
+                var hashingConfigActual = passwordHashing.GetPossibleConfig(CorrectPassword, GlobalSalt, DefaultSaltedPasswordFormat, inputHash);
+
+                Assert.Equal(expectedHashingAlgo, hashingConfigActual.HashingAlgo);
+                Assert.Equal(expectedEncodingType, hashingConfigActual.PasswordHashEncodingType);
             }
         }
     }
