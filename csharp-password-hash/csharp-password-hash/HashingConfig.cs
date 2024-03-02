@@ -8,6 +8,7 @@ namespace CSharpPasswordHash
         [ObsoleteAttribute("Use GeneratePerPasswordSalt instead", false)]
         public bool GenratePerPasswordSalt { get { return GeneratePerPasswordSalt; } set { GeneratePerPasswordSalt = value; } }
         public bool GeneratePerPasswordSalt { get; set; }
+        public int PerPasswordSaltLength { get; set; }
         public string GlobalSalt { get; set; }
 
         public string SaltedPasswordFormat { get; set; }

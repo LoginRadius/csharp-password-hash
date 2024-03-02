@@ -111,12 +111,12 @@ namespace CSharpPasswordHash
             };
         }
 
-        public static string GenerateSalt()
+        public static string GenerateSalt(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             return new string(
-                Enumerable.Repeat(chars, 8)
+                Enumerable.Repeat(chars, length)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
         }

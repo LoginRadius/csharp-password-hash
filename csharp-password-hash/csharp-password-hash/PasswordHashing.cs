@@ -55,7 +55,7 @@ namespace CSharpPasswordHash
         public string GetHash(string password, HashingConfig hashConfig)
         {
             var salt = hashConfig.GeneratePerPasswordSalt
-                ? Hashing.GenerateSalt()
+                ? Hashing.GenerateSalt(hashConfig.PerPasswordSaltLength)
                     : hashConfig.GlobalSalt;
 
             var saltedPassword = GetSaltedPassword(password, salt, hashConfig.SaltedPasswordFormat);
