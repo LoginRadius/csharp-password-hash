@@ -116,7 +116,7 @@ namespace CSharpPasswordHash
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             return new string(
-                Enumerable.Repeat(chars, length)
+                Enumerable.Repeat(chars, length == 0 ? 8 : length)
                     .Select(s => s[random.Next(s.Length)])
                     .ToArray());
         }
